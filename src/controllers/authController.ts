@@ -1,22 +1,24 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
-// import jwt from "jsonwebtoken";
 import { User } from "../models/User";
 import jwt, { SignOptions } from "jsonwebtoken";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import crypto from "crypto";
 
-const generateToken = (id: string) => {
-  console.log("JWT SECRET USED TO SIGN:", process.env.JWT_SECRET)
+const generateToken = (user: any) => {
   const options: SignOptions = {
     expiresIn: (process.env.JWT_EXPIRES_IN || "1d") as jwt.SignOptions["expiresIn"]
   };
 
-  return jwt.sign({ id }, process.env.JWT_SECRET || "default_secret", options);
+  return jwt.sign(
+    {
+      id: user._id,
+      role: user.role
+    },
+    process.env.JWT_SECRET || "default_secret",
+    options
+  );
 };
-
-
-
 
 // REGISTER
 export const register = async (req: Request, res: Response) => {
@@ -41,7 +43,7 @@ export const register = async (req: Request, res: Response) => {
 
   res.status(201).json({
     message: "User registered successfully",
-    token: generateToken(user._id.toString()),
+    token: generateToken(user),
     user: {
       id: user._id,
       name: user.name,
@@ -70,7 +72,7 @@ export const login = async (req: Request, res: Response) => {
 
   res.json({
     message: "Login successful",
-    token: generateToken(user._id.toString()),
+    token: generateToken(user),
     user: {
       id: user._id,
       name: user.name,
@@ -81,7 +83,7 @@ export const login = async (req: Request, res: Response) => {
 
 // Get profile
 export const getProfile = async (req: AuthRequest, res: Response) => {
-  const user = await User.findById(req.user?.id).select("-password");
+  const user = await User.findById(req.user?._id).select("-password");
 
   if (!user) {
     return res.status(404).json({ message: "User not found" });
@@ -103,7 +105,7 @@ export const changePassword = async (req: AuthRequest, res: Response) => {
     return res.status(400).json({ message: "All fields required" });
   }
 
-  const user = await User.findById(req.user?.id);
+  const user = await User.findById(req.user?._id);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }

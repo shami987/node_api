@@ -8,6 +8,7 @@ import {
 } from "../controllers/categoryController";
 import { validateCategory } from "../middlewares/validateCategory";
 import { protect } from "../middlewares/authMiddleware";
+import { authorizeRoles } from "../middlewares/roleMiddleware";
 
 const router = Router();
 
@@ -50,6 +51,8 @@ router.get("/", getCategories);
  *       404:
  *         description: Category not found
  */
+
+/** Protected: view a single category (any authenticated user) */
 router.get("/:id", protect, getCategoryById);
 
 /**
@@ -78,7 +81,9 @@ router.get("/:id", protect, getCategoryById);
  *       201:
  *         description: Category created
  */
-router.post("/", protect, validateCategory, createCategory);
+
+/** Protected: view a single category (any authenticated user) */
+router.post("/", protect, authorizeRoles("admin"), validateCategory, createCategory);
 
 /**
  * @swagger
@@ -100,7 +105,7 @@ router.post("/", protect, validateCategory, createCategory);
  *       200:
  *         description: Category updated
  */
-router.put("/:id", protect, validateCategory, updateCategory);
+router.put("/:id", protect, authorizeRoles("admin"), validateCategory, updateCategory);
 
 /**
  * @swagger
@@ -120,6 +125,6 @@ router.put("/:id", protect, validateCategory, updateCategory);
  *       200:
  *         description: Category deleted
  */
-router.delete("/:id", protect, deleteCategory);
+router.delete("/:id", protect, authorizeRoles("admin"), deleteCategory);
 
 export default router;

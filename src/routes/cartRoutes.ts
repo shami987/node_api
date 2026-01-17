@@ -8,6 +8,8 @@ import {
 } from "../controllers/cartControllers";
 
 import { validateCartItemBody } from "../middlewares/cartMiddleware";
+import { isCartOwnerOrAdmin } from "../middlewares/cartOwnerMiddle";
+import { protect } from "../middlewares/authMiddleware";
 
 const router = Router();
 
@@ -25,7 +27,7 @@ const router = Router();
  *       401:
  *         description: Unauthorized
  */
-router.get("/", getCartByUser);
+router.get("/", protect, getCartByUser);
 
 /**
  * @swagger
@@ -58,7 +60,8 @@ router.get("/", getCartByUser);
  *         description: Product not found
  */
 
-router.post("/:userId/items", validateCartItemBody, addItemToCart);
+// ADD item to cart (only owner or admin)
+router.post("/:userId/items", protect, isCartOwnerOrAdmin, validateCartItemBody, addItemToCart);
 
 /**
  * @swagger
@@ -91,7 +94,8 @@ router.post("/:userId/items", validateCartItemBody, addItemToCart);
  *         description: Cart updated successfully
  */
 
-router.put("/:userId/items/:id", validateCartItemBody, updateCartItem);
+// UPDATE cart item (only owner or admin)
+router.put("/:userId/items/:id", protect, isCartOwnerOrAdmin, validateCartItemBody, updateCartItem);
 
 /**
  * @swagger
@@ -127,6 +131,7 @@ router.delete("/:userId/items/:id", deleteCartItem);
  *         description: Cart cleared successfully
  */
 
-router.delete("/:userId", clearCart);
+// CLEAR cart (only owner or admin)
+router.delete("/:userId", protect, isCartOwnerOrAdmin, clearCart);
 
 export default router;

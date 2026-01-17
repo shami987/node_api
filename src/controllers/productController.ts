@@ -1,14 +1,15 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import { AuthRequest } from "../middlewares/authMiddleware";
 import { Product } from "../models/Product";
 
 // GET all products (with category populated)
-export const getProducts = async (req: Request, res: Response) => { // Fetch all products with category populated
+export const getProducts = async (req: AuthRequest, res: Response) => { // Fetch all products with category populated
   const products = await Product.find().populate("category"); 
   res.json(products);
 };
 
 // GET product by ID
-export const getProductById = async (req: Request, res: Response) => {
+export const getProductById = async (req: AuthRequest, res: Response) => {
   const product = await Product.findById(req.params.id).populate("category");
 
   if (!product) {
@@ -19,7 +20,9 @@ export const getProductById = async (req: Request, res: Response) => {
 };
 
 // CREATE product
-export const createProduct = async (req: Request, res: Response) => {
+export const createProduct = async (req: AuthRequest, res: Response) => {
+  // console.log("Request body:", req.body);
+  // console.log("Request user:", req.user); // Cast to any to access user
   const { name, price, description, categoryId, inStock, quantity } = req.body;
 
   const product = await Product.create({
@@ -28,7 +31,8 @@ export const createProduct = async (req: Request, res: Response) => {
     description,
     category: categoryId,
     inStock,
-    quantity
+    quantity,
+    createdBy: req.user?._id
   });
 
   res.status(201).json({
@@ -38,7 +42,8 @@ export const createProduct = async (req: Request, res: Response) => {
 };
 
 // UPDATE product
-export const updateProduct = async (req: Request, res: Response) => {
+export const updateProduct = async (req: AuthRequest, res: Response) => {
+  console.log("Request body:", req.body); // Debugging line
   const { name, price, description, categoryId, inStock, quantity } = req.body;
 
   const product = await Product.findByIdAndUpdate(
@@ -65,7 +70,7 @@ export const updateProduct = async (req: Request, res: Response) => {
 };
 
 // DELETE product
-export const deleteProduct = async (req: Request, res: Response) => {
+export const deleteProduct = async (req: AuthRequest, res: Response) => {
   const product = await Product.findByIdAndDelete(req.params.id);
 
   if (!product) {

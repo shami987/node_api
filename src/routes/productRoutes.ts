@@ -9,6 +9,9 @@ import {
 import { validateProductBody } from "../middlewares/productMiddleware";
 import { validateCategoryExists } from "../middlewares/validateCategoryExists";
 import { protect } from "../middlewares/authMiddleware";
+import { authorizeRoles } from "../middlewares/roleMiddleware";
+import { isProductOwnerOrAdmin } from "../middlewares/productOwnership";
+
         
 const router = Router();
      
@@ -89,7 +92,11 @@ router.get("/:id", protect, getProductById);
  *         description: Product created successfully
  */
 
-router.post("/", protect, validateProductBody, validateCategoryExists, createProduct);
+/**
+ * Admin + Vendor – Create product
+ */
+
+router.post("/", protect, authorizeRoles("admin", "vendor"), validateProductBody, validateCategoryExists, createProduct);
 
 /**
  * @swagger
@@ -130,7 +137,11 @@ router.post("/", protect, validateProductBody, validateCategoryExists, createPro
  *       404:
  *         description: Product not found
  */
-router.put("/:id", protect, validateProductBody, validateCategoryExists, updateProduct);
+
+/**
+ * Admin + Vendor (ownership enforced)
+ */
+router.put("/:id", protect, authorizeRoles("admin", "vendor"), validateProductBody, validateCategoryExists, isProductOwnerOrAdmin, updateProduct);
 
 /**
  * @swagger
@@ -152,5 +163,10 @@ router.put("/:id", protect, validateProductBody, validateCategoryExists, updateP
  *       404:
  *         description: Product not found
  */
-router.delete("/:id", protect, deleteProduct);
+
+/**
+ * Admin + Vendor (ownership enforced)
+ */
+router.delete("/:id", protect, authorizeRoles("admin", "vendor"), isProductOwnerOrAdmin, deleteProduct);
+
 export default router;

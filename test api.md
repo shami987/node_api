@@ -151,3 +151,23 @@ Body
 16. DELETE PRODUCT
 DELETE
 http://localhost:3000/api/products/65ab141fc9b11e34d9910002
+
+17. Login as client
+{
+  "email": "customer@test.com",
+  "password": "123456"
+}
+
+18. Login as admin
+{
+  "email": "admin@test.com",
+  "password": "123456",
+  "role": "admin"
+}
+
+19.Login as vendor
+{
+  "email": "vendor@test.com",
+  "password": "123456",
+  "role": "vendor"
+}
