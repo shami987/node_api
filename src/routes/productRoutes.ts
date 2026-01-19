@@ -11,11 +11,11 @@ import { validateCategoryExists } from "../middlewares/validateCategoryExists";
 import { protect } from "../middlewares/authMiddleware";
 import { authorizeRoles } from "../middlewares/roleMiddleware";
 import { isProductOwnerOrAdmin } from "../middlewares/productOwnership";
+import { upload } from "../config/multer";
 
-        
 const router = Router();
-     
-/**  
+
+/**
  * @swagger
  * /api/products:
  *   get:
@@ -25,7 +25,6 @@ const router = Router();
  *       200:
  *         description: List of products
  */
-
 router.get("/", getProducts);
 
 /**
@@ -49,7 +48,7 @@ router.get("/", getProducts);
  *         description: Product not found
  */
 router.get("/:id", protect, getProductById);
- 
+
 /**
  * @swagger
  * /api/products:
@@ -61,7 +60,7 @@ router.get("/:id", protect, getProductById);
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required:
@@ -87,16 +86,23 @@ router.get("/:id", protect, getProductById);
  *               quantity:
  *                 type: number
  *                 example: 20
+ *               image:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       201:
  *         description: Product created successfully
  */
-
-/**
- * Admin + Vendor – Create product
- */
-
-router.post("/", protect, authorizeRoles("admin", "vendor"), validateProductBody, validateCategoryExists, createProduct);
+// Admin + Vendor – Create product with image
+router.post(
+  "/",
+  protect,
+  upload.single("image"),
+  authorizeRoles("admin", "vendor"),
+  validateProductBody,
+  validateCategoryExists,
+  createProduct
+);
 
 /**
  * @swagger
@@ -115,7 +121,7 @@ router.post("/", protect, authorizeRoles("admin", "vendor"), validateProductBody
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -131,17 +137,26 @@ router.post("/", protect, authorizeRoles("admin", "vendor"), validateProductBody
  *                 type: boolean
  *               quantity:
  *                 type: number
+ *               image:
+ *                 type: string
+ *                 format: binary
  *     responses:
  *       200:
  *         description: Product updated successfully
  *       404:
  *         description: Product not found
  */
-
-/**
- * Admin + Vendor (ownership enforced)
- */
-router.put("/:id", protect, authorizeRoles("admin", "vendor"), validateProductBody, validateCategoryExists, isProductOwnerOrAdmin, updateProduct);
+// Admin + Vendor (ownership enforced) – Update product with optional image
+router.put(
+  "/:id",
+  protect,
+  upload.single("image"),
+  authorizeRoles("admin", "vendor"),
+  validateProductBody,
+  validateCategoryExists,
+  isProductOwnerOrAdmin,
+  updateProduct
+);
 
 /**
  * @swagger
@@ -163,10 +178,13 @@ router.put("/:id", protect, authorizeRoles("admin", "vendor"), validateProductBo
  *       404:
  *         description: Product not found
  */
-
-/**
- * Admin + Vendor (ownership enforced)
- */
-router.delete("/:id", protect, authorizeRoles("admin", "vendor"), isProductOwnerOrAdmin, deleteProduct);
+// Admin + Vendor (ownership enforced)
+router.delete(
+  "/:id",
+  protect,
+  authorizeRoles("admin", "vendor"),
+  isProductOwnerOrAdmin,
+  deleteProduct
+);
 
 export default router;

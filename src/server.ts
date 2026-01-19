@@ -10,6 +10,7 @@ import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger";
 import orderRoutes from "./routes/orderRoutes";
 import adminOrderRoutes from "./routes/adminOrderRoutes";
+import { staticUploads } from "./middlewares/staticUploads";
 
 
 // Load environment variables from .env file
@@ -49,6 +50,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminOrderRoutes);
+app.use("/uploads", staticUploads);
 
 //swagger route
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

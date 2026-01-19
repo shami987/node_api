@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import { Product } from "../models/Product";
+import { uploadToCloudinary } from "../utils/uploadToCloudinary";
 
 // GET all products (with category populated)
 export const getProducts = async (req: AuthRequest, res: Response) => { // Fetch all products with category populated
@@ -21,9 +22,14 @@ export const getProductById = async (req: AuthRequest, res: Response) => {
 
 // CREATE product
 export const createProduct = async (req: AuthRequest, res: Response) => {
-  // console.log("Request body:", req.body);
-  // console.log("Request user:", req.user); // Cast to any to access user
   const { name, price, description, categoryId, inStock, quantity } = req.body;
+
+  let image: string | undefined;
+
+  if (req.file) {
+    const uploaded = await uploadToCloudinary(req.file.buffer);
+    image = uploaded.secure_url;
+  }
 
   const product = await Product.create({
     name,
@@ -32,7 +38,8 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
     category: categoryId,
     inStock,
     quantity,
-    createdBy: req.user?._id
+    image,
+    createdBy: req.user!._id
   });
 
   res.status(201).json({
@@ -41,10 +48,11 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
   });
 };
 
+
 // UPDATE product
 export const updateProduct = async (req: AuthRequest, res: Response) => {
   // console.log("Request body:", req.body); // Debugging line
-  const { name, price, description, categoryId, inStock, quantity } = req.body;
+  const { name, price, description, categoryId, inStock, quantity, image } = req.body;
 
   const product = await Product.findByIdAndUpdate(
     req.params.id,
@@ -54,7 +62,8 @@ export const updateProduct = async (req: AuthRequest, res: Response) => {
       description,
       category: categoryId,
       inStock,
-      quantity
+      quantity,
+      image
     },
     { new: true }
   );

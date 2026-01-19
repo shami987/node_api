@@ -7,6 +7,7 @@ export interface ProductDocument extends Document { // Define the Product docume
   category: mongoose.Types.ObjectId;
   inStock: boolean;
   quantity: number; 
+  image?: string;   
   createdBy: mongoose.Types.ObjectId;
 }
 
@@ -39,11 +40,15 @@ const ProductSchema: Schema = new Schema( // Define the Product schema
       required: true,
       min: 0
     },
+   // ✅ ADD THIS
+    image: {
+      type: String
+    },
     
     // ✅ OWNER
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "USER",
+      ref: "User",
       required: true
     }
   },
