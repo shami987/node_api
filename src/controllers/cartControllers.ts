@@ -1,15 +1,16 @@
 import { Request, Response } from "express";
+import { AuthRequest } from "../middlewares/authMiddleware";
 import { Cart } from "../models/Cart";
 
-// ==============================
-// GET cart by user
-// ==============================
+
 export const getCartByUser = async (
-  req: Request<{ userId: string }>,
+  req: AuthRequest,
   res: Response
 ) => {
   try {
-    const cart = await Cart.findOne({ userId: req.params.userId })
+    const userId = req.user!._id; // 🔥 get user from token
+
+    const cart = await Cart.findOne({ userId })
       .populate("items.product");
 
     if (!cart) {
@@ -22,66 +23,45 @@ export const getCartByUser = async (
   }
 };
 
+
 // ==============================
 // ADD item to cart
 // ==============================
-export const addItemToCart = async (
-  req: Request<{ userId: string }>,
-  res: Response
-) => {
-  try {
-    const { productId, quantity } = req.body;
-    const { userId } = req.params;
+export const addItemToCart = async (req: AuthRequest, res: Response) => {
+  const userId = req.user!._id;
+  const { productId, quantity } = req.body;
 
-    if (!productId || !quantity) {
-      return res
-        .status(400)
-        .json({ message: "productId and quantity are required" });
-    }
-
-    let cart = await Cart.findOne({ userId });
-
-    if (!cart) {
-      cart = await Cart.create({
-        userId,
-        items: []
-      });
-    }
-
-    const item = cart.items.find(
-      i => i.product.toString() === productId
-    );
-
-    if (item) {
-      item.quantity += quantity;
-    } else {
-      cart.items.push({
-        product: productId,
-        quantity
-      });
-    }
-
-    await cart.save();
-
-    res.status(201).json({
-      message: "Item added to cart",
-      cart
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+  let cart = await Cart.findOne({ userId });
+  if (!cart) {
+    cart = await Cart.create({ userId, items: [] });
   }
+
+  const item = cart.items.find(
+    i => i.product.toString() === productId
+  );
+
+  if (item) {
+    item.quantity += quantity;
+  } else {
+    cart.items.push({ product: productId, quantity });
+  }
+
+  await cart.save();
+  res.status(201).json({ message: "Item added to cart", cart });
 };
+
 
 // ==============================
 // UPDATE cart item quantity
 // ==============================
 export const updateCartItem = async (
-  req: Request<{ userId: string; id: string }>,
+  req: AuthRequest,
   res: Response
 ) => {
   try {
     const { quantity } = req.body;
     const { userId, id } = req.params;
+    const itemId = Array.isArray(id) ? id[0] : id;
 
     if (!quantity || quantity < 1) {
       return res
@@ -95,7 +75,7 @@ export const updateCartItem = async (
       return res.status(404).json({ message: "Cart not found" });
     }
 
-    const item = cart.items.id(id);
+    const item = cart.items.id(itemId);
 
     if (!item) {
       return res.status(404).json({ message: "Item not found" });
@@ -117,11 +97,12 @@ export const updateCartItem = async (
 // DELETE cart item
 // ==============================
 export const deleteCartItem = async (
-  req: Request<{ userId: string; id: string }>,
+  req: AuthRequest,
   res: Response
 ) => {
   try {
     const { userId, id } = req.params;
+    const itemId = Array.isArray(id) ? id[0] : id;
 
     const cart = await Cart.findOne({ userId });
 
@@ -129,7 +110,7 @@ export const deleteCartItem = async (
       return res.status(404).json({ message: "Cart not found" });
     }
 
-    const item = cart.items.id(id);
+    const item = cart.items.id(itemId);
 
     if (!item) {
       return res.status(404).json({ message: "Item not found" });
@@ -151,12 +132,13 @@ export const deleteCartItem = async (
 // CLEAR cart
 // ==============================
 export const clearCart = async (
-  req: Request<{ userId: string }>,
+  req: AuthRequest,
   res: Response
 ) => {
   try {
     const cart = await Cart.findOneAndDelete({
-      userId: req.params.userId
+     userId: req.user!._id
+
     });
 
     if (!cart) {

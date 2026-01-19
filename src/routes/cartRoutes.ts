@@ -31,7 +31,7 @@ router.get("/", protect, getCartByUser);
 
 /**
  * @swagger
- * /api/cart/{userId}/items:
+ * /api/cart/items:
  *   post:
  *     summary: Add product to cart
  *     tags: [Cart]
@@ -61,11 +61,11 @@ router.get("/", protect, getCartByUser);
  */
 
 // ADD item to cart (only owner or admin)
-router.post("/:userId/items", protect, isCartOwnerOrAdmin, validateCartItemBody, addItemToCart);
+router.post("/items", protect, isCartOwnerOrAdmin, validateCartItemBody, addItemToCart);
 
 /**
  * @swagger
- * /api/cart/{productId}:
+ * /api/cart/{id}:
  *   put:     
  *     summary: Update cart item quantity
  *     tags: [Cart]
@@ -95,11 +95,11 @@ router.post("/:userId/items", protect, isCartOwnerOrAdmin, validateCartItemBody,
  */
 
 // UPDATE cart item (only owner or admin)
-router.put("/:userId/items/:id", protect, isCartOwnerOrAdmin, validateCartItemBody, updateCartItem);
+router.put("/items/:id", protect, isCartOwnerOrAdmin, validateCartItemBody, updateCartItem);
 
 /**
  * @swagger
- * /api/cart/{productId}:
+ * /api/cart:
  *   delete:
  *     summary: Remove product from cart
  *     tags: [Cart]
@@ -116,7 +116,7 @@ router.put("/:userId/items/:id", protect, isCartOwnerOrAdmin, validateCartItemBo
  *         description: Item removed from cart
  */
 
-router.delete("/:userId/items/:id", deleteCartItem);
+router.delete("/items/:id", deleteCartItem);
 
 /**
  * @swagger
@@ -132,6 +132,6 @@ router.delete("/:userId/items/:id", deleteCartItem);
  */
 
 // CLEAR cart (only owner or admin)
-router.delete("/:userId", protect, isCartOwnerOrAdmin, clearCart);
+router.delete("/", protect, isCartOwnerOrAdmin, clearCart);
 
 export default router;

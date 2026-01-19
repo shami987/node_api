@@ -43,7 +43,7 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
 
 // UPDATE product
 export const updateProduct = async (req: AuthRequest, res: Response) => {
-  console.log("Request body:", req.body); // Debugging line
+  // console.log("Request body:", req.body); // Debugging line
   const { name, price, description, categoryId, inStock, quantity } = req.body;
 
   const product = await Product.findByIdAndUpdate(

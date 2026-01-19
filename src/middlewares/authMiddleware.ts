@@ -37,7 +37,7 @@ export const protect = async (
 ) => {
   const authHeader = req.headers.authorization;
 
-console.log("Auth header:", authHeader);
+// console.log("Auth header:", authHeader);
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Not authorized" });
@@ -72,3 +72,16 @@ console.log("Auth header:", authHeader);
     return res.status(401).json({ message: "Token invalid" });
   }
 };
+
+// Middleware to check if user is admin
+
+export const isAdmin = ( 
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.user?.role !== "admin") {
+    return res.status(403).json({ message: "Admin access only" });
+  }
+  next();
+}
