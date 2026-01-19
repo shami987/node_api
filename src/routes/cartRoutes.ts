@@ -60,8 +60,8 @@ router.get("/", protect, getCartByUser);
  *         description: Product not found
  */
 
-// ADD item to cart (only owner or admin)
-router.post("/items", protect, isCartOwnerOrAdmin, validateCartItemBody, addItemToCart);
+// ADD item to cart (only authenticated users)
+router.post("/items", protect, validateCartItemBody, addItemToCart);
 
 /**
  * @swagger
@@ -116,7 +116,7 @@ router.put("/items/:id", protect, isCartOwnerOrAdmin, validateCartItemBody, upda
  *         description: Item removed from cart
  */
 
-router.delete("/items/:id", deleteCartItem);
+router.delete("/items/:id", protect, isCartOwnerOrAdmin, deleteCartItem);
 
 /**
  * @swagger

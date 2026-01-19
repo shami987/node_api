@@ -28,6 +28,7 @@ export const getCartByUser = async (
 // ADD item to cart
 // ==============================
 export const addItemToCart = async (req: AuthRequest, res: Response) => {
+  // console.log("Adding item to cart for user:", req.user!._id);
   const userId = req.user!._id;
   const { productId, quantity } = req.body;
 
@@ -60,8 +61,9 @@ export const updateCartItem = async (
 ) => {
   try {
     const { quantity } = req.body;
-    const { userId, id } = req.params;
+    const { id } = req.params;
     const itemId = Array.isArray(id) ? id[0] : id;
+    const userId = req.user!._id;
 
     if (!quantity || quantity < 1) {
       return res
@@ -101,8 +103,9 @@ export const deleteCartItem = async (
   res: Response
 ) => {
   try {
-    const { userId, id } = req.params;
+    const { id } = req.params;
     const itemId = Array.isArray(id) ? id[0] : id;
+    const userId = req.user!._id;
 
     const cart = await Cart.findOne({ userId });
 
