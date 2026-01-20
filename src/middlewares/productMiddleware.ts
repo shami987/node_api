@@ -6,8 +6,9 @@ export const validateProductBody = (
   res: Response,
   next: NextFunction
 ): void => {
-  const { name, price, categoryId, inStock, quantity } = req.body;
+  let { name, price, categoryId, inStock, quantity } = req.body;
 
+  // Required fields
   if (
     !name ||
     price === undefined ||
@@ -19,12 +20,23 @@ export const validateProductBody = (
     return;
   }
 
+  // Cast types (CRITICAL)
+  price = Number(price);
+  quantity = Number(quantity);
+  inStock = inStock === "true" || inStock === true;
+
+  // Put back casted values
+  req.body.price = price;
+  req.body.quantity = quantity;
+  req.body.inStock = inStock;
+
+  // Validate
   if (typeof name !== "string") {
     res.status(400).json({ message: "Name must be a string" });
     return;
   }
 
-  if (typeof price !== "number" || price < 0) {
+  if (isNaN(price) || price < 0) {
     res.status(400).json({ message: "Price must be a positive number" });
     return;
   }
@@ -39,7 +51,7 @@ export const validateProductBody = (
     return;
   }
 
-  if (typeof quantity !== "number" || quantity < 0) {
+  if (isNaN(quantity) || quantity < 0) {
     res.status(400).json({ message: "Quantity must be positive" });
     return;
   }

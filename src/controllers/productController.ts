@@ -22,11 +22,14 @@ export const getProductById = async (req: AuthRequest, res: Response) => {
 
 // CREATE product
 export const createProduct = async (req: AuthRequest, res: Response) => {
+  // console.log("Request body:", req.body); // Debugging line
+  // console.log("Request file:", req.file); // Debugging line
   const { name, price, description, categoryId, inStock, quantity } = req.body;
 
   let image: string | undefined;
 
   if (req.file) {
+    
     const uploaded = await uploadToCloudinary(req.file.buffer);
     image = uploaded.secure_url;
   }

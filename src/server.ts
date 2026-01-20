@@ -11,6 +11,8 @@ import swaggerSpec from "./config/swagger";
 import orderRoutes from "./routes/orderRoutes";
 import adminOrderRoutes from "./routes/adminOrderRoutes";
 import { staticUploads } from "./middlewares/staticUploads";
+import userRouteres from "./routes/userRoutes";
+import userRoutes from "./routes/userRoutes";
 
 
 // Load environment variables from .env file
@@ -51,6 +53,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminOrderRoutes);
 app.use("/uploads", staticUploads);
+app.use("/api/users", userRoutes);
 
 //swagger route
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

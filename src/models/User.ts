@@ -9,6 +9,7 @@ export interface IUser extends Document {
     role: UserRole;
     resetPasswordToken?: string; // optional because not always set 
     resetPasswordExpire?: Date; // optional because not always set
+    image?: string; // optional profile image
 }
 
 const userSchema = new Schema<IUser>(
@@ -20,7 +21,8 @@ const userSchema = new Schema<IUser>(
 
         // 🔑 Forgot password fields
         resetPasswordToken: { type: String },
-        resetPasswordExpire: { type: Date }
+        resetPasswordExpire: { type: Date },
+        image: { type: String } // profile image URL
     },
     { timestamps: true }
   

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { register, login, logout, getProfile, changePassword } from "../controllers/authController";
+import { register, login, logout, getProfile, changePassword, forgotPassword, resetPassword } from "../controllers/authController";
 import { protect } from "../middlewares/authMiddleware";
 
 
@@ -129,6 +129,63 @@ router.post("/logout", protect, logout);
  */
 router.put("/change-password", protect, changePassword);
 
+/**
+ * @swagger
+ * /api/auth/forgot-password:
+ *   post:
+ *     summary: Request password reset link
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: john@example.com
+ *     responses:
+ *       200:
+ *         description: Password reset link sent
+ *       404:
+ *         description: User not found
+ */
+router.post("/forgot-password", forgotPassword);
+
+/**
+ * @swagger
+ * /api/auth/reset-password/{token}:
+ *   post:
+ *     summary: Reset password using token
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - password
+ *             properties:
+ *               password:
+ *                 type: string
+ *                 example: newPassword123
+ *     responses:
+ *       200:
+ *         description: Password reset successful
+ *       400:
+ *         description: Invalid or expired token
+ */
+router.post("/reset-password", resetPassword);
 
 
 export default router;
