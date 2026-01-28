@@ -20,7 +20,15 @@ const router = Router();
  * /api/products:
  *   get:
  *     summary: Get all products
+ *     description: Retrieve all products or search by keyword
  *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Search products by name or description
  *     responses:
  *       200:
  *         description: List of products

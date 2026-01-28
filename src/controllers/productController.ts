@@ -5,8 +5,16 @@ import { uploadToCloudinary } from "../utils/uploadToCloudinary";
 
 // GET all products (with category populated)
 export const getProducts = async (req: AuthRequest, res: Response) => { // Fetch all products with category populated
-  const products = await Product.find().populate("category"); 
-  res.json(products);
+  const { search } = req.query;
+
+  let query: any ={};
+
+  //🔍 Text search (uses MongoDB text index)
+ if (search) {
+    query = { $text: { $search: search as string } };
+  }
+  const products = await Product.find(query).populate("category");
+  res.json({ products });
 };
 
 // GET product by ID

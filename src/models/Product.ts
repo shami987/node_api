@@ -16,7 +16,8 @@ const ProductSchema: Schema = new Schema( // Define the Product schema
     name: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
+      index: true
     },
     price: {
       type: Number,
@@ -29,7 +30,8 @@ const ProductSchema: Schema = new Schema( // Define the Product schema
     category: {
       type: Schema.Types.ObjectId,
       ref: "Category",
-      required: true
+      required: true,
+      index: true
     },
     inStock: {
       type: Boolean,
@@ -54,6 +56,14 @@ const ProductSchema: Schema = new Schema( // Define the Product schema
   },
   { timestamps: true }
 );
+
+// Create text index for search functionality
+ProductSchema.index(
+  { name: "text", description: "text" },
+  { weights: { name: 5, description: 1 } }
+);
+
+// ✅ Add category and price indexes here ProductSchema.index({ category: 1 }); ProductSchema.index({ price: 1 });
 
 export const Product = mongoose.model<ProductDocument>( // Export the Product model
     "Product",
