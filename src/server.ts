@@ -24,12 +24,25 @@ dotenv.config();
 const app = express();
 
 //Middleware
+const allowedOrigins = [
+  "http://localhost:5173", // local dev
+  "https://new-kapee-n9jg4r730-cephas-projects-2ece8076.vercel.app" // deployed frontend
+];
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+  origin: function(origin, callback) {
+    if(!origin) return callback(null, true); // allow requests like Postman/curl
+    if(allowedOrigins.indexOf(origin) === -1){
+      var msg = 'The CORS policy does not allow access from this origin';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
 app.use(express.json());
 app.use(morgan("combined"));
 
