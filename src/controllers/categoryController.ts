@@ -19,19 +19,21 @@ export const getCategoryById = async (req: Request, res: Response) => {
 };
 
 // CREATE category
-export const createCategory = async (req: Request, res: Response) => {
-  const { name, description } = req.body;
+export const createCategory = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { name, description, image } = req.body;
 
-  const category = await Category.create({
-    name,
-    description,
-  });
+    const category = await Category.create({ name, description, image });
 
-  res.status(201).json({
-    message: "Category created successfully",
-    category,
-  });
+    res.status(201).json({
+      message: "Category created successfully",
+      category,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
 };
+
 
 // UPDATE category
 export const updateCategory = async (req: Request, res: Response) => {

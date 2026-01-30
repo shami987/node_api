@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
-  getProducts,
+  getAllProducts,
+  getProductsByCategory,
   getProductById,
   createProduct,
   updateProduct,
@@ -33,7 +34,25 @@ const router = Router();
  *       200:
  *         description: List of products
  */
-router.get("/", getProducts);
+router.get("/", getAllProducts);
+
+/**
+ * @swagger
+ * /api/products/category/{categoryId}:
+ *   get:
+ *     summary: Get products by category
+ *     tags: [Products]
+ *     parameters:
+ *       - name: categoryId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of products in category
+ */
+router.get("/category/:categoryId", getProductsByCategory);
 
 /**
  * @swagger
@@ -41,8 +60,6 @@ router.get("/", getProducts);
  *   get:
  *     summary: Get product by ID
  *     tags: [Products]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -55,7 +72,7 @@ router.get("/", getProducts);
  *       404:
  *         description: Product not found
  */
-router.get("/:id", protect, getProductById);
+router.get("/:id", getProductById);
 
 /**
  * @swagger
@@ -101,7 +118,6 @@ router.get("/:id", protect, getProductById);
  *       201:
  *         description: Product created successfully
  */
-// Admin + Vendor – Create product with image
 router.post(
   "/",
   protect,
@@ -154,7 +170,6 @@ router.post(
  *       404:
  *         description: Product not found
  */
-// Admin + Vendor (ownership enforced) – Update product with optional image
 router.put(
   "/:id",
   protect,
@@ -186,7 +201,6 @@ router.put(
  *       404:
  *         description: Product not found
  */
-// Admin + Vendor (ownership enforced)
 router.delete(
   "/:id",
   protect,

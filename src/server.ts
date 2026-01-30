@@ -11,6 +11,7 @@ import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger";
 import orderRoutes from "./routes/orderRoutes";
 import adminOrderRoutes from "./routes/adminOrderRoutes";
+import adminCartRoutes from "./routes/adminCartRoutes";
 import { staticUploads } from "./middlewares/staticUploads";
 import userRouteres from "./routes/userRoutes";
 import userRoutes from "./routes/userRoutes";
@@ -22,12 +23,18 @@ dotenv.config();
 
 
 const app = express();
+app.use(cors());
 
 //Middleware
 const allowedOrigins = [
-  "http://localhost:5173", // local dev
-  "https://new-kapee-n9jg4r730-cephas-projects-2ece8076.vercel.app" // deployed frontend
+  "http://localhost:5173", // frontend dev
+  "http://localhost:3000", // swagger UI dev
+  "https://new-kapee-n9jg4r730-cephas-projects-2ece8076.vercel.app", // deployed frontend
+  "https://node-api-ezuc.onrender.com" // allow same-origin requests for Swagger
 ];
+
+
+
 
 app.use(cors({
   origin: function(origin, callback) {
@@ -72,6 +79,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminOrderRoutes);
+app.use("/api/admin", adminCartRoutes);
 app.use("/uploads", staticUploads);
 app.use("/api/users", userRoutes);
 

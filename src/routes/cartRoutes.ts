@@ -6,9 +6,6 @@ import {
   deleteCartItem,
   clearCart
 } from "../controllers/cartControllers";
-
-import { validateCartItemBody } from "../middlewares/cartMiddleware";
-import { isCartOwnerOrAdmin } from "../middlewares/cartOwnerMiddle";
 import { protect } from "../middlewares/authMiddleware";
 
 const router = Router();
@@ -31,7 +28,7 @@ router.get("/", protect, getCartByUser);
 
 /**
  * @swagger
- * /api/cart/items:
+ * /api/cart:
  *   post:
  *     summary: Add product to cart
  *     tags: [Cart]
@@ -59,14 +56,12 @@ router.get("/", protect, getCartByUser);
  *       404:
  *         description: Product not found
  */
-
-// ADD item to cart (only authenticated users)
-router.post("/items", protect, validateCartItemBody, addItemToCart);
+router.post("/", protect, addItemToCart);
 
 /**
  * @swagger
- * /api/cart/{id}:
- *   put:     
+ * /api/cart/{productId}:
+ *   put:
  *     summary: Update cart item quantity
  *     tags: [Cart]
  *     security:
@@ -92,14 +87,14 @@ router.post("/items", protect, validateCartItemBody, addItemToCart);
  *     responses:
  *       200:
  *         description: Cart updated successfully
+ *       404:
+ *         description: Item not found
  */
-
-// UPDATE cart item (only owner or admin)
-router.put("/items/:id", protect, isCartOwnerOrAdmin, validateCartItemBody, updateCartItem);
+router.put("/:productId", protect, updateCartItem);
 
 /**
  * @swagger
- * /api/cart:
+ * /api/cart/{productId}:
  *   delete:
  *     summary: Remove product from cart
  *     tags: [Cart]
@@ -114,13 +109,14 @@ router.put("/items/:id", protect, isCartOwnerOrAdmin, validateCartItemBody, upda
  *     responses:
  *       200:
  *         description: Item removed from cart
+ *       404:
+ *         description: Item not found
  */
-
-router.delete("/items/:id", protect, isCartOwnerOrAdmin, deleteCartItem);
+router.delete("/:productId", protect, deleteCartItem);
 
 /**
  * @swagger
- * /api/cart/clear:
+ * /api/cart:
  *   delete:
  *     summary: Clear all items from cart
  *     tags: [Cart]
@@ -130,8 +126,6 @@ router.delete("/items/:id", protect, isCartOwnerOrAdmin, deleteCartItem);
  *       200:
  *         description: Cart cleared successfully
  */
-
-// CLEAR cart (only owner or admin)
-router.delete("/", protect, isCartOwnerOrAdmin, clearCart);
+router.delete("/", protect, clearCart);
 
 export default router;

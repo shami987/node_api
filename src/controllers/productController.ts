@@ -4,16 +4,22 @@ import { Product } from "../models/Product";
 import { uploadToCloudinary } from "../utils/uploadToCloudinary";
 
 // GET all products (with category populated)
-export const getProducts = async (req: AuthRequest, res: Response) => { // Fetch all products with category populated
-  const { search } = req.query;
-
-  let query: any ={};
-
-  //🔍 Text search (uses MongoDB text index)
- if (search) {
-    query = { $text: { $search: search as string } };
+export const getAllProducts = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const products = await Product.find().populate("category");
+    res.json({ products });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch products", error });
   }
-  const products = await Product.find(query).populate("category");
+};
+
+// GET all products (with category populated)
+export const getProductsByCategory = async (req: AuthRequest, res: Response) => {
+  const { categoryId } = req.params;
+
+  const products = await Product.find({ category: categoryId })
+    .populate("category");
+
   res.json({ products });
 };
 
@@ -25,7 +31,7 @@ export const getProductById = async (req: AuthRequest, res: Response) => {
     return res.status(404).json({ message: "Product not found" });
   }
 
-  res.json(product);
+  res.json({product});
 };
 
 // CREATE product
@@ -40,6 +46,8 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
     
     const uploaded = await uploadToCloudinary(req.file.buffer);
     image = uploaded.secure_url;
+  } else if (req.body.image) {
+    image = req.body.image;
   }
 
   const product = await Product.create({

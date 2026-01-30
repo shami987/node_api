@@ -16,8 +16,8 @@ const options: swaggerJsdoc.Options = {
       }
     },
     servers: [
-      //{ url: "http://localhost:3000", description: "Local server" }
-      { url: "https://node-api-ezuc.onrender.com/", description: "Production server" }
+      { url: "http://localhost:3000", description: "Local server" }
+      //{ url: "https://node-api-ezuc.onrender.com/", description: "Production server" }
     ],
     tags: [
       { name: "Auth", description: "Authentication & user management" },
