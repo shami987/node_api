@@ -84,7 +84,7 @@ export const updateCartItem = async (
     await cart.save();
     res.json(cart);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: (error as Error).message });
   }
 };
 
@@ -106,12 +106,15 @@ export const deleteCartItem = async (
     }
 
     // Remove item from cart (don't throw error if item doesn't exist)
-    cart.items = cart.items.filter(item => item.product.toString() !== productId);
+    const itemIndex = cart.items.findIndex(item => item.product.toString() === productId);
+    if (itemIndex > -1) {
+      cart.items.splice(itemIndex, 1);
+    }
     
     await cart.save();
     res.json(cart);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: (error as Error).message });
   }
 };
 
