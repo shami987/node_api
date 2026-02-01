@@ -3,7 +3,9 @@ import { protect } from "../middlewares/authMiddleware";
 import { authorizeRoles  } from "../middlewares/roleMiddleware";
 import {
   getAllOrders,
-  updateOrderStatus
+  getOrderById,
+  updateOrderStatus,
+  deleteOrder
 } from "../controllers/adminOrderController";
 
 const router = Router();
@@ -32,6 +34,28 @@ router.use(protect, authorizeRoles("admin"));
  *         description: Forbidden
  */
 router.get("/orders", getAllOrders);
+
+/**
+ * @swagger
+ * /api/admin/orders/{id}:
+ *   get:
+ *     summary: Get specific order (Admin only)
+ *     tags: [AdminOrders]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Order retrieved
+ *       404:
+ *         description: Order not found
+ */
+router.get("/orders/:id", getOrderById);
 
 /**
  * @swagger
@@ -65,6 +89,28 @@ router.get("/orders", getAllOrders);
  *       400:
  *         description: Invalid status
  */
-router.patch("/orders/:id/status", updateOrderStatus);
+router.put("/orders/:id", updateOrderStatus);
+
+/**
+ * @swagger
+ * /api/admin/orders/{id}:
+ *   delete:
+ *     summary: Delete order (Admin only)
+ *     tags: [AdminOrders]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Order deleted
+ *       404:
+ *         description: Order not found
+ */
+router.delete("/orders/:id", deleteOrder);
 
 export default router;
