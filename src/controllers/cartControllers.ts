@@ -59,39 +59,32 @@ export const updateCartItem = async (
   req: AuthRequest,
   res: Response
 ) => {
+  const { productId } = req.params;
+  const { quantity } = req.body;
+  const userId = req.user!._id;
+
   try {
-    const { quantity } = req.body;
-    const { id } = req.params;
-    const itemId = Array.isArray(id) ? id[0] : id;
-    const userId = req.user!._id;
-
-    if (!quantity || quantity < 1) {
-      return res
-        .status(400)
-        .json({ message: "Quantity must be greater than 0" });
-    }
-
-    const cart = await Cart.findOne({ userId });
-
+    let cart = await Cart.findOne({ userId });
+    
     if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
+      // Create new cart if doesn't exist
+      cart = new Cart({ userId, items: [] });
     }
 
-    const item = cart.items.id(itemId);
-
-    if (!item) {
-      return res.status(404).json({ message: "Item not found" });
+    const existingItem = cart.items.find(item => item.product.toString() === productId);
+    
+    if (existingItem) {
+      // Update existing item
+      existingItem.quantity = quantity;
+    } else {
+      // Add new item to cart
+      cart.items.push({ product: productId, quantity });
     }
-
-    item.quantity = quantity;
+    
     await cart.save();
-
-    res.json({
-      message: "Cart item updated",
-      cart
-    });
+    res.json(cart);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -102,32 +95,23 @@ export const deleteCartItem = async (
   req: AuthRequest,
   res: Response
 ) => {
+  const { productId } = req.params;
+  const userId = req.user!._id;
+
   try {
-    const { id } = req.params;
-    const itemId = Array.isArray(id) ? id[0] : id;
-    const userId = req.user!._id;
-
     const cart = await Cart.findOne({ userId });
-
+    
     if (!cart) {
       return res.status(404).json({ message: "Cart not found" });
     }
 
-    const item = cart.items.id(itemId);
-
-    if (!item) {
-      return res.status(404).json({ message: "Item not found" });
-    }
-
-    item.deleteOne();
+    // Remove item from cart (don't throw error if item doesn't exist)
+    cart.items = cart.items.filter(item => item.product.toString() !== productId);
+    
     await cart.save();
-
-    res.json({
-      message: "Item removed from cart",
-      cart
-    });
+    res.json(cart);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ message: error.message });
   }
 };
 
