@@ -12,6 +12,8 @@ import swaggerSpec from "./config/swagger";
 import orderRoutes from "./routes/orderRoutes";
 import adminOrderRoutes from "./routes/adminOrderRoutes";
 import adminCartRoutes from "./routes/adminCartRoutes";
+import adminProductRoutes from "./routes/adminProductRoutes";
+import adminCategoryRoutes from "./routes/adminCategoryRoutes";
 import { staticUploads } from "./middlewares/staticUploads";
 import userRouteres from "./routes/userRoutes";
 import userRoutes from "./routes/userRoutes";
@@ -80,6 +82,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminOrderRoutes);
 app.use("/api/admin", adminCartRoutes);
+app.use("/api/admin", adminProductRoutes);
+app.use("/api/admin", adminCategoryRoutes);
 app.use("/uploads", staticUploads);
 app.use("/api/users", userRoutes);
 

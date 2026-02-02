@@ -1,13 +1,33 @@
 import { Request, Response } from "express";
 import { Order } from "../models/Order";
+import { AuthRequest } from "../middlewares/authMiddleware";
 
-export const getAllOrders = async (_: Request, res: Response) => {
-  const orders = await Order.find()
-    .populate("userId", "name email")
-    .populate("items.product", "name")
-    .sort({ createdAt: -1 });
+export const getAllOrders = async (req: AuthRequest, res: Response) => {
+  try {
+    const orders = await Order.find()
+      .populate('userId', 'name email') // Populate user data
+      .populate('items.product', 'name price image')
+      .sort({ createdAt: -1 });
 
-  res.json(orders);
+    // Transform the data to include user info
+    const transformedOrders = orders.map(order => ({
+      _id: order._id,
+      id: order._id,
+      user: {
+        email: (order.userId as any)?.email,
+        name: (order.userId as any)?.name
+      },
+      items: order.items,
+      totalAmount: order.totalAmount,
+      status: order.status,
+      createdAt: (order as any).createdAt,
+      updatedAt: (order as any).updatedAt
+    }));
+
+    res.json(transformedOrders);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch orders', error });
+  }
 };
 
 export const getOrderById = async (req: Request, res: Response) => {
