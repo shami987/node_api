@@ -4,7 +4,9 @@ import {
   addItemToCart,
   updateCartItem,
   deleteCartItem,
-  clearCart
+  clearCart,
+  getAllCarts,
+  deleteCart
 } from "../controllers/cartControllers";
 import { protect } from "../middlewares/authMiddleware";
 
@@ -127,5 +129,41 @@ router.delete("/:productId", protect, deleteCartItem);
  *         description: Cart cleared successfully
  */
 router.delete("/", protect, clearCart);
+
+/**
+ * @swagger
+ * /api/admin/carts:
+ *   get:
+ *     summary: Get all carts (Admin)
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: All carts retrieved successfully
+ */
+router.get("/admin/carts", protect, getAllCarts);
+
+/**
+ * @swagger
+ * /api/admin/carts/{cartId}:
+ *   delete:
+ *     summary: Delete a cart (Admin)
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: cartId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Cart deleted successfully
+ *       404:
+ *         description: Cart not found
+ */
+router.delete("/admin/carts/:cartId", protect, deleteCart);
 
 export default router;

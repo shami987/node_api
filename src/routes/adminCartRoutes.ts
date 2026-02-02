@@ -7,7 +7,8 @@ import {
   addItemToUserCart,
   updateUserCartItem,
   deleteUserCartItem,
-  clearUserCart
+  clearUserCart,
+  deleteCart
 } from "../controllers/adminCartController";
 
 const router = Router();
@@ -177,7 +178,32 @@ router.delete("/carts/:userId/:productId", deleteUserCartItem);
 
 /**
  * @swagger
- * /api/admin/carts/{userId}:
+ * /api/admin/carts/{cartId}:
+ *   delete:
+ *     summary: Delete a cart by cart ID (Admin only)
+ *     tags: [AdminCart]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: cartId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Cart ID
+ *     responses:
+ *       200:
+ *         description: Cart deleted successfully
+ *       404:
+ *         description: Cart not found
+ *       403:
+ *         description: Forbidden - Admin access only
+ */
+router.delete("/carts/:cartId", deleteCart);
+
+/**
+ * @swagger
+ * /api/admin/carts/user/{userId}:
  *   delete:
  *     summary: Clear user's cart (Admin only)
  *     tags: [AdminCart]
@@ -198,6 +224,6 @@ router.delete("/carts/:userId/:productId", deleteUserCartItem);
  *       403:
  *         description: Forbidden - Admin access only
  */
-router.delete("/carts/:userId", clearUserCart);
+router.delete("/carts/user/:userId", clearUserCart);
 
 export default router;
