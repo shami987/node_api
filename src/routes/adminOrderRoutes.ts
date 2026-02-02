@@ -5,6 +5,7 @@ import {
   getAllOrders,
   getOrderById,
   updateOrderStatus,
+  updateOrder,
   deleteOrder
 } from "../controllers/adminOrderController";
 
@@ -89,7 +90,46 @@ router.get("/orders/:id", getOrderById);
  *       400:
  *         description: Invalid status
  */
-router.put("/orders/:id", updateOrderStatus);
+router.put("/orders/:id/status", updateOrderStatus);
+
+/**
+ * @swagger
+ * /api/admin/orders/{id}:
+ *   put:
+ *     summary: Update order (Admin only)
+ *     tags: [AdminOrders]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               total:
+ *                 type: number
+ *               subtotal:
+ *                 type: number
+ *               shipping:
+ *                 type: number
+ *               tax:
+ *                 type: number
+ *               status:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Order updated successfully
+ *       404:
+ *         description: Order not found
+ */
+router.put("/orders/:id", updateOrder);
 
 /**
  * @swagger

@@ -18,6 +18,10 @@ export const getAllOrders = async (req: AuthRequest, res: Response) => {
         name: (order.userId as any)?.name
       },
       items: order.items,
+      total: order.total || order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+      subtotal: order.subtotal,
+      shipping: order.shipping,
+      tax: order.tax,
       totalAmount: order.totalAmount,
       status: order.status,
       createdAt: (order as any).createdAt,
@@ -65,6 +69,23 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
   await order.save();
 
   res.json({ message: "Order status updated", order });
+};
+
+export const updateOrder = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    
+    const order = await Order.findByIdAndUpdate(id, updateData, { new: true });
+    
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+    
+    res.json({ message: "Order updated successfully", order });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update order", error });
+  }
 };
 
 export const deleteOrder = async (req: Request, res: Response) => {

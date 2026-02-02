@@ -18,6 +18,10 @@ export interface OrderDocument extends Document { // Define the Order document i
   userId: Types.ObjectId;
   items: OrderItem[];
   totalAmount: number;
+  total: number;
+  subtotal: number;
+  shipping: number;
+  tax: number;
   status: OrderStatus;
 }
 
@@ -42,6 +46,22 @@ const OrderSchema = new Schema( // Define the Order schema
     totalAmount: {
       type: Number,
       required: true
+    },
+    total: {
+      type: Number,
+      required: true
+    },
+    subtotal: {
+      type: Number,
+      required: true
+    },
+    shipping: {
+      type: Number,
+      default: 0
+    },
+    tax: {
+      type: Number,
+      default: 0
     },
     status: {
       type: String,
