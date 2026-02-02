@@ -119,6 +119,59 @@ export const deleteCartItem = async (
 };
 
 // ==============================
+// GET ALL CARTS (Admin)
+// ==============================
+export const getAllCarts = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const carts = await Cart.find()
+      .populate('userId', 'name email')
+      .populate('items.product', 'name price image')
+      .sort({ updatedAt: -1 });
+
+    const transformedCarts = carts.map(cart => ({
+      _id: cart._id,
+      userId: (cart.userId as any)._id || cart.userId,
+      user: {
+        name: (cart.userId as any).name,
+        email: (cart.userId as any).email
+      },
+      items: cart.items,
+      createdAt: cart.createdAt,
+      updatedAt: cart.updatedAt
+    }));
+
+    res.json(transformedCarts);
+  } catch (error) {
+    res.status(500).json({ message: (error as Error).message });
+  }
+};
+
+// ==============================
+// DELETE CART (Admin)
+// ==============================
+export const deleteCart = async (
+  req: AuthRequest,
+  res: Response
+) => {
+  try {
+    const { cartId } = req.params;
+    
+    const cart = await Cart.findByIdAndDelete(cartId);
+    
+    if (!cart) {
+      return res.status(404).json({ message: "Cart not found" });
+    }
+
+    res.json({ message: "Cart deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: (error as Error).message });
+  }
+};
+
+// ==============================
 // CLEAR cart
 // ==============================
 export const clearCart = async (

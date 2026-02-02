@@ -8,6 +8,8 @@ export interface CartItemDocument extends Types.Subdocument {
 export interface CartDocument extends Document {
   userId: string;
   items: Types.DocumentArray<CartItemDocument>;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const CartItemSchema = new Schema(
