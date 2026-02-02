@@ -14,6 +14,7 @@ import adminOrderRoutes from "./routes/adminOrderRoutes";
 import adminCartRoutes from "./routes/adminCartRoutes";
 import adminProductRoutes from "./routes/adminProductRoutes";
 import adminCategoryRoutes from "./routes/adminCategoryRoutes";
+import adminDashboardRoutes from "./routes/adminDashboardRoutes";
 import { staticUploads } from "./middlewares/staticUploads";
 import userRouteres from "./routes/userRoutes";
 import userRoutes from "./routes/userRoutes";
@@ -84,6 +85,7 @@ app.use("/api/admin", adminOrderRoutes);
 app.use("/api/admin", adminCartRoutes);
 app.use("/api/admin", adminProductRoutes);
 app.use("/api/admin", adminCategoryRoutes);
+app.use("/api/admin", adminDashboardRoutes);
 app.use("/uploads", staticUploads);
 app.use("/api/users", userRoutes);
 
