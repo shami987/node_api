@@ -4,7 +4,6 @@ import { Cart } from "../models/Cart";
 import { Order } from "../models/Order";
 
 export const createOrder = async (req: AuthRequest, res: Response) => {
-  // console.log("Creating order for user:", req.user!._id);
   const userId = req.user!._id;
 
   const cart = await Cart.findOne({ userId }).populate("items.product");
@@ -23,15 +22,23 @@ export const createOrder = async (req: AuthRequest, res: Response) => {
     };
   });
 
-  const totalAmount = orderItems.reduce(
+  const subtotal = orderItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+  
+  const shipping = 5; // Fixed shipping cost
+  const tax = 0; // No tax
+  const total = subtotal + shipping + tax;
 
   const order = await Order.create({
     userId,
     items: orderItems,
-    totalAmount
+    subtotal,
+    shipping,
+    tax,
+    total,
+    totalAmount: total // Keep this if your schema also has totalAmount
   });
 
   await Cart.findOneAndDelete({ userId });
