@@ -33,8 +33,8 @@ const allowedOrigins = [
   "http://localhost:5173", // frontend dev
   "http://localhost:3000", // swagger UI dev
   "https://new-kapee-n9jg4r730-cephas-projects-2ece8076.vercel.app", // deployed frontend
-  "https://node-api-ezuc.onrender.com", // your Render backend URL
-  "https://new-kapee.vercel.app/" // add your actual frontend domain
+  "https://new-kapee.vercel.app", // your actual frontend domain
+  "https://new-kapee.vercel.app/" // with trailing slash
 ];
 
 
