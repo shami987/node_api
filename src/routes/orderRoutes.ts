@@ -4,7 +4,8 @@ import {
   createOrder, 
   getMyOrders,
   getOrderById,
-  cancelOrder
+  cancelOrder,
+  sendConfirmationEmail
 } from "../controllers/orderController";
 
 const router = Router();
@@ -100,5 +101,36 @@ router.get("/:id", getOrderById);      // GET /api/orders/:id
  *         description: Order not found
  */
 router.patch("/:id/cancel", cancelOrder); // PATCH /api/orders/:id/cancel
+
+/**
+ * @swagger
+ * /api/orders/send-confirmation:
+ *   post:
+ *     summary: Send order confirmation email
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               customerName:
+ *                 type: string
+ *               orderId:
+ *                 type: string
+ *               orderDetails:
+ *                 type: object
+ *     responses:
+ *       200:
+ *         description: Confirmation email sent
+ *       500:
+ *         description: Failed to send email
+ */
+router.post("/send-confirmation", sendConfirmationEmail);
 
 export default router;

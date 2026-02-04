@@ -2,6 +2,7 @@ import { Response } from "express";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import { Cart } from "../models/Cart";
 import { Order } from "../models/Order";
+import { sendOrderConfirmation } from "../services/emailService";
 
 export const createOrder = async (req: AuthRequest, res: Response) => {
   const userId = req.user!._id;
@@ -94,4 +95,13 @@ export const cancelOrder = async (req: AuthRequest, res: Response) => {
   await order.save();
 
   res.json({ message: "Order cancelled", order });
+};
+
+export const sendConfirmationEmail = async (req: AuthRequest, res: Response) => {
+  try {
+    await sendOrderConfirmation(req.body);
+    res.json({ message: 'Confirmation email sent' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to send email' });
+  }
 };
