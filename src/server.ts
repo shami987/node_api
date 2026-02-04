@@ -33,7 +33,8 @@ const allowedOrigins = [
   "http://localhost:5173", // frontend dev
   "http://localhost:3000", // swagger UI dev
   "https://new-kapee-n9jg4r730-cephas-projects-2ece8076.vercel.app", // deployed frontend
-  "https://node-api-ezuc.onrender.com" // allow same-origin requests for Swagger
+  "https://node-api-ezuc.onrender.com", // your Render backend URL
+  "https://new-kapee.vercel.app/" // add your actual frontend domain
 ];
 
 
@@ -96,3 +97,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 })
+
