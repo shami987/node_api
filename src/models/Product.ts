@@ -63,8 +63,10 @@ ProductSchema.index(
   { weights: { name: 5, description: 1 } }
 );
 
-ProductSchema.index({ category: 1 });
-ProductSchema.index({ price: 1 });
+// Compound indexes for better query performance
+ProductSchema.index({ category: 1, inStock: 1 });
+ProductSchema.index({ price: 1, inStock: 1 });
+ProductSchema.index({ createdAt: -1 }); // For sorting by newest
 
 export const Product = mongoose.model<ProductDocument>( // Export the Product model
     "Product",

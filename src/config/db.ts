@@ -9,10 +9,11 @@ const connectDB = async () => {
     }
 
     await mongoose.connect(mongoURI, {
-      maxPoolSize: 10,
-      minPoolSize: 5,
+      maxPoolSize: 50,
+      minPoolSize: 10,
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
+      maxIdleTimeMS: 30000,
     });
     console.log("MongoDB connected");
   } catch (error) {

@@ -9,7 +9,10 @@ export const getAllProducts = async (req: AuthRequest, res: Response): Promise<v
     const products = await Product.find()
       .populate("category", "name")
       .select("name price description category inStock quantity image")
-      .lean();
+      .lean()
+      .limit(100); // Limit results
+    
+    res.set('Cache-Control', 'public, max-age=60'); // Cache for 60 seconds
     res.json({ products });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch products", error });
@@ -21,8 +24,11 @@ export const getProductsByCategory = async (req: AuthRequest, res: Response) => 
   const { categoryId } = req.params;
 
   const products = await Product.find({ category: categoryId })
-    .populate("category");
+    .populate("category", "name")
+    .lean()
+    .limit(100);
 
+  res.set('Cache-Control', 'public, max-age=60');
   res.json({ products });
 };
 
