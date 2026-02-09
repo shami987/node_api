@@ -6,7 +6,10 @@ import { uploadToCloudinary } from "../utils/uploadToCloudinary";
 // GET all products (with category populated)
 export const getAllProducts = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const products = await Product.find().populate("category");
+    const products = await Product.find()
+      .populate("category", "name")
+      .select("name price description category inStock quantity image")
+      .lean();
     res.json({ products });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch products", error });
