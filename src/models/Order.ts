@@ -23,6 +23,16 @@ export interface OrderDocument extends Document { // Define the Order document i
   shipping: number;
   tax: number;
   status: OrderStatus;
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+  paymentIntentId?: string;
+  shippingAddress?: {
+    name: string;
+    line1: string;
+    line2?: string;
+    city: string;
+    postalCode: string;
+    country: string;
+  };
 }
 
 const OrderItemSchema = new Schema( // Define the OrderItem schema
@@ -67,6 +77,23 @@ const OrderSchema = new Schema( // Define the Order schema
       type: String,
       enum: ["pending", "confirmed", "shipped", "delivered", "cancelled"],
       default: "pending"
+    },
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "paid", "failed", "refunded"],
+      default: "pending"
+    },
+    paymentIntentId: {
+      type: String,
+      default: undefined
+    },
+    shippingAddress: {
+      name: String,
+      line1: String,
+      line2: String,
+      city: String,
+      postalCode: String,
+      country: String
     }
   },
   { timestamps: true }

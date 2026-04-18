@@ -5,6 +5,7 @@ import {
   getMyOrders,
   getOrderById,
   cancelOrder,
+  confirmPayment,
   sendConfirmationEmail
 } from "../controllers/orderController";
 
@@ -101,6 +102,39 @@ router.get("/:id", getOrderById);      // GET /api/orders/:id
  *         description: Order not found
  */
 router.patch("/:id/cancel", cancelOrder); // PATCH /api/orders/:id/cancel
+
+/**
+ * @swagger
+ * /api/orders/confirm-payment:
+ *   post:
+ *     summary: Confirm payment and complete order
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               orderId:
+ *                 type: string
+ *               paymentIntentId:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Payment confirmed and order completed
+ *       403:
+ *         description: Access denied
+ *       404:
+ *         description: Order not found
+ *       500:
+ *         description: Failed to confirm payment
+ */
+router.post("/confirm-payment", confirmPayment);
 
 /**
  * @swagger

@@ -3,12 +3,13 @@ import nodemailer from 'nodemailer';
 interface OrderData {
   email: string;
   customerName: string;
-  orderId: string;
+  orderId: string | any;
   orderDetails: {
     total: number;
     items: any[];
     subtotal: number;
     shipping: number;
+    shippingAddress?: any;
   };
 }
 

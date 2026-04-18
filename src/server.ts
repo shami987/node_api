@@ -10,6 +10,7 @@ import authRoutes from "./routes/authRoutes";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swagger";
 import orderRoutes from "./routes/orderRoutes";
+import paymentRoutes from "./routes/paymentRoutes";
 import adminOrderRoutes from "./routes/adminOrderRoutes";
 import adminCartRoutes from "./routes/adminCartRoutes";
 import adminProductRoutes from "./routes/adminProductRoutes";
@@ -72,6 +73,7 @@ app.get("/", (req, res) => {
       categories: "/api/categories",
       cart: "/api/cart",
       orders: "/api/orders",
+      payments: "/api/payments",
       admin: "/api/admin"
     }
   });
@@ -82,6 +84,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/payments", paymentRoutes);
 app.use("/api/admin", adminOrderRoutes);
 app.use("/api/admin", adminCartRoutes);
 app.use("/api/admin", adminProductRoutes);
