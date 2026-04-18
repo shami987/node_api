@@ -2,13 +2,26 @@ import { Response } from "express";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import Stripe from "stripe";
 
-// Initialize Stripe with your secret key
-if (!process.env.STRIPE_SECRET_KEY) throw new Error("STRIPE_SECRET_KEY is not set in .env");
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+type StripeClient = InstanceType<typeof Stripe>;
+let stripeClient: StripeClient | null = null;
+
+function getStripe(): StripeClient | null {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) return null;
+  if (!stripeClient) stripeClient = new Stripe(key);
+  return stripeClient;
+}
 
 export const createPaymentIntent = async (req: AuthRequest, res: Response) => {
   try {
-    const { amount } = req.body; // Amount in cents
+    const stripe = getStripe();
+    if (!stripe) {
+      return res.status(503).json({
+        message: "Stripe is not configured (missing STRIPE_SECRET_KEY on the server)",
+      });
+    }
+
+    const { amount } = req.body; // dollars from client; converted to cents below
 
     if (!amount || amount <= 0) {
       return res.status(400).json({ message: "Invalid amount" });
@@ -37,6 +50,11 @@ export const createPaymentIntent = async (req: AuthRequest, res: Response) => {
 
 export const confirmPayment = async (req: AuthRequest, res: Response) => {
   try {
+    const stripe = getStripe();
+    if (!stripe) {
+      return res.status(503).json({ message: "Stripe is not configured" });
+    }
+
     const { paymentIntentId, orderId } = req.body;
 
     // Retrieve the PaymentIntent to confirm it was successful

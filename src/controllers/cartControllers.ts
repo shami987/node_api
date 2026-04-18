@@ -14,7 +14,8 @@ export const getCartByUser = async (
       .populate("items.product");
 
     if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
+      // Empty cart: return 200 so clients can treat "no cart yet" like an empty cart (avoids 404 noise in devtools).
+      return res.json({ userId, items: [] });
     }
 
     res.json(cart);

@@ -27,11 +27,11 @@ dotenv.config();
 
 
 const app = express();
-app.use(cors());
 
 //Middleware
 const allowedOrigins = [
-  "http://localhost:5173", // frontend dev
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
   "http://localhost:3000", // swagger UI dev
   "https://new-kapee-n9jg4r730-cephas-projects-2ece8076.vercel.app", // deployed frontend
   "https://new-kapee.vercel.app", // your actual frontend domain
